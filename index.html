@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futbolle - Teo Fassardi</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+    <div id="contenedor-principal" class="contenedor-principal">
+        <header class="encabezado-juego">
+            <h1>Futbolle ⚽</h1>
+        </header>
+        <section id="pantalla-registro" class="seccion-pantalla">
+            <div class="tarjeta-formulario">
+                <h2>¡Bienvenido a Futbolle!</h2>
+                <p>Ingresa tu nombre para comenzar la partida:</p>
+                <form id="formulario-inicio">
+                    <div class="grupo-input">
+                        <input type="text" id="nombre-usuario" placeholder="Ej: Teo Fassardi" autocomplete="off">
+                        <span id="error-nombre" class="texto-error clase-oculta">El nombre debe tener al menos 3 letras.</span>
+                    </div>
+                    <button type="submit" id="boton-jugar" class="boton-primario">Comenzar Partida</button>
+                </form>
+            </div>
+        </section>
+        <section id="pantalla-juego" class="seccion-pantalla clase-oculta">
+            <div class="panel-info">
+                <div class="info-item">
+                    <span>Tiempo:</span>
+                    <strong id="temporizador">00:00</strong>
+                </div>
+                <div class="info-item">
+                    <span>Intentos restantes:</span>
+                    <strong id="intentos-restantes">8</strong>
+                </div>
+            </div>
+            <div class="contenedor-buscador">
+                <form id="formulario-busqueda" autocomplete="off">
+                    <div class="grupo-busqueda">
+                        <input type="text" id="input-busqueda" placeholder="Escribe el nombre de un jugador..." disabled>
+                        <ul id="lista-autocompletado" class="lista-autocompletado clase-oculta"></ul>
+                    </div>
+                </form>
+            </div>
+            <div id="tablero-intentos" class="tablero-intentos">
+            </div>
+            <div class="panel-acciones">
+                <button id="boton-reiniciar" class="boton-secundario">Reiniciar Partida</button>
+                <a href="contacto.html" class="enlace-contacto">Contacto</a>
+            </div>
+        </section>
+    </div>
+    <div id="modal-alerta" class="modal clase-oculta">
+        <div class="contenido-modal">
+            <h3 id="modal-titulo">Mensaje</h3>
+            <p id="modal-mensaje">Contenido de la alerta...</p>
+            <button id="modal-boton-cerrar" class="boton-primario">Entendido</button>
+        </div>
+    </div>
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/juego.js"></script>
+</body>
+</html>
