@@ -24,7 +24,7 @@ function buscarJugadores(consulta, callbackExito, callbackError) {
         return;
     }
 
-    var url = API_BASE_URL + '?q=' + encodeURIComponent(consulta) + '&limit=8';
+    var url = API_BASE_URL + '/search?q=' + encodeURIComponent(consulta) + '&limit=8';
 
     fetch(url)
         .then(function (respuesta) {
