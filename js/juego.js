@@ -136,3 +136,110 @@ function seleccionarJugador(jugador){
     procesarIntento(jugador);
 }
 
+function procesarIntento(jugadorIntentado){
+    if(!juegoIniciado) {
+        juegoIniciado = true;
+        iniciarTemporizador();
+    }
+    if(comprobarJugadorRepetido(jugadorIntentado.id)){
+        mostrarModal('Jugador Repetido', 'Ya intentaste con este jugador en esta partida.');
+        return;
+    }
+    historialIntentos.push(jugadorIntentado.id);
+    intentosRestantes = intentosRestantes - 1;
+    elementoIntentos.textContent = intentosRestantes;
+    crearFilaIntentoEnTablero(jugadorIntentado);
+    if(jugadorIntentado.id === jugadorSecreto.id){
+        finalizarPartida(true);
+        return;
+    }
+    if(intentosRestantes === 0){
+        finalizarPartida(false);
+    }
+}
+
+function comprobarJugadorRepetido(id) {
+    var i;
+    for(i = 0; i < historialIntentos.length; i++){
+        if(historialIntentos[i] === id){
+            return true;
+        }
+    }
+    return false;
+}
+
+function crearFilaIntentoEnTablero(jugador) {
+    var tablero = document.getElementById('tablero-intentos');
+    var fila = document.createElement('div');
+    fila.className = 'fila-intento';
+    var celdaNac = crearCeldaAtributo(
+        jugador.nationality, 
+        jugador.nationality === jugadorSecreto.nationality
+    );
+    var celdaClub = crearCeldaAtributo(
+        jugador.club, 
+        jugador.club === jugadorSecreto.club
+    );
+    var celdaPos = crearCeldaAtributo(
+        jugador.position, 
+        jugador.position === jugadorSecreto.position
+    );
+    var celdaEdad = crearCeldaNumerica(
+        jugador.age, 
+        jugadorSecreto.age
+    );
+    var celdaOverall = crearCeldaNumerica(
+        jugador.overall, 
+        jugadorSecreto.overall
+    );
+    var celdaAltura = crearCeldaNumerica(
+        jugador.heightCm, 
+        jugadorSecreto.heightCm
+    );
+    fila.appendChild(celdaNac);
+    fila.appendChild(celdaClub);
+    fila.appendChild(celdaPos);
+    fila.appendChild(celdaEdad);
+    fila.appendChild(celdaOverall);
+    fila.appendChild(celdaAltura);
+    tablero.appendChild(fila);
+}
+
+function crearCeldaAtributo(valor, coincide) {
+    var celda = document.createElement('div');
+    celda.className = 'celda-atributo ' + (coincide ? 'celda-correcto' : 'celda-incorrecto');
+    celda.textContent = valor;
+    return celda;
+}
+
+function crearCeldaNumerica(valorIntentado, valorSecreto) {
+    var celda = document.createElement('div');
+    var coincide = valorIntentado === valorSecreto;
+    celda.className = 'celda-atributo ' + (coincide ? 'celda-correcto' : 'celda-incorrecto');
+    if(coincide) {
+        celda.textContent = valorIntentado;
+    } else if(valorSecreto > valorIntentado) {
+        celda.textContent = valorIntentado + ' 🠝'
+    } else {
+        celda.textContent = valorIntentado + ' 🠟'
+    }
+    return celda;
+}
+
+function finalizarPartida(haGanado) {
+    detenerTemporizador();
+    inputBusqueda.disabled = true;
+    var tiempoTotal = formatearTiempo(obtenerSegundosTranscurridos());
+    if (haGanado) {
+        var intentosUsados = 8 - intentosRestantes;
+        mostrarModal(
+            '¡Ganaste! 🎉', 
+            'Adivinaste a ' + jugadorSecreto.name + ' en ' + intentosUsados + ' intentos. Tiempo: ' + tiempoTotal + '.'
+        );
+    } else {
+        mostrarModal(
+            'Fin de la partida 😢', 
+            'Te quedaste sin intentos. El jugador secreto era: ' + jugadorSecreto.name + '.'
+        );
+    }
+}
