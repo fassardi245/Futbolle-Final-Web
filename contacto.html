@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futbolle - Contacto</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+    <div id="contenedor-principal" class="contenedor-principal">
+        <header class="encabezado-juego">
+            <h1>Contacto ✉️</h1>
+        </header>
+
+        <section class="seccion-pantalla">
+            <div class="tarjeta-formulario">
+                <h2>Envíanos un mensaje</h2>
+                <p>Completa el formulario para contactarte con nosotros.</p>
+
+                <form id="formulario-contacto" novalidate>
+                    <div class="grupo-input">
+                        <label for="contacto-nombre" class="etiqueta-formulario">Nombre:</label>
+                        <input type="text" id="contacto-nombre" placeholder="Solo letras y números">
+                        <span id="error-contacto-nombre" class="texto-error clase-oculta">El nombre debe ser alfanumérico y no estar vacío.</span>
+                    </div>
+                    <div class="grupo-input">
+                        <label for="contacto-email" class="etiqueta-formulario">E-mail:</label>
+                        <input type="email" id="contacto-email" placeholder="ejemplo@correo.com">
+                        <span id="error-contacto-email" class="texto-error clase-oculta">Ingresa un correo electrónico válido.</span>
+                    </div>
+                    <div class="grupo-input">
+                        <label for="contacto-mensaje" class="etiqueta-formulario">Mensaje:</label>
+                        <textarea id="contacto-mensaje" class="area-texto" placeholder="Escribe tu mensaje aquí..."></textarea>
+                        <span id="error-contacto-mensaje" class="texto-error clase-oculta">El mensaje debe tener más de 5 caracteres.</span>
+                    </div>
+                    <button type="submit" class="boton-primario">Enviar Correo</button>
+                </form>
+            </div>
+        </section>
+        <div class="panel-acciones-centrado">
+            <a href="index.html" class="enlace-contacto">← Volver al Juego</a>
+        </div>
+    </div>
+    <div id="modal-alerta" class="modal clase-oculta">
+        <div class="contenido-modal">
+            <h3 id="modal-titulo">Mensaje</h3>
+            <p id="modal-mensaje">Contenido de la alerta...</p>
+            <button id="modal-boton-cerrar" class="boton-primario">Entendido</button>
+        </div>
+    </div>
+    <script src="js/utils.js"></script>
+    <script src="js/contacto.js"></script>
+</body>
+</html>

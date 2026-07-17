@@ -34,6 +34,7 @@ body{
     display: flex;
     flex-direction: column;
     width: 100%;
+    gap: 8px;
 }
 
 .tarjeta-formulario{
@@ -179,7 +180,7 @@ body{
 .tablero-intentos{
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     width: 100%;
 }
 
@@ -196,12 +197,14 @@ body{
     align-items: center;
     gap: 4px;
     flex: 1;
-    height: 70px;
+    height: 75px;
+    padding: 4px;
     border-radius: 8px;
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     font-weight: 700;
     color:#ffffff;
     text-align: center;
+    overflow: hidden;
 }
 
 .celda-correcto {
@@ -284,13 +287,59 @@ body{
     color: #94a3b8;
 }
 
+.etiqueta-formulario {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-align: left;
+}
+
+.area-texto{
+    width: 100%;
+    min-height: 100px;
+    padding: 12px;
+    border: 1px solid #475569;
+    border-radius: 8px;
+    background-color: #0f172a;
+    font-family: inherit;
+    color: #ffffff;
+    outline: none;
+    resize: vertical;
+    margin-right: 10px;
+}
+
+.area-texto:focus{
+    border-color: #38bdf8;
+}
+
+.panel-acciones-centrado{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.etiqueta-celda {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #000000;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+.valor-celda {
+    font-size: 0.85rem;
+    word-break: break-word;
+}
+
+.clase-oculta{
+    display: none;
+}
+
 @media (max-width: 480px) {
     .celda-atributo {
         font-size: 0.65rem;
         height: 60px;
     }
-}
-
-.clase-oculta{
-    display: none;
 }

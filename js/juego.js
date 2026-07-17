@@ -173,26 +173,32 @@ function crearFilaIntentoEnTablero(jugador) {
     var fila = document.createElement('div');
     fila.className = 'fila-intento';
     var celdaNac = crearCeldaAtributo(
+        'Nac',
         jugador.nationality, 
         jugador.nationality === jugadorSecreto.nationality
     );
     var celdaClub = crearCeldaAtributo(
+        'Club',
         jugador.club, 
         jugador.club === jugadorSecreto.club
     );
     var celdaPos = crearCeldaAtributo(
+        'Pos',
         jugador.position, 
         jugador.position === jugadorSecreto.position
     );
     var celdaEdad = crearCeldaNumerica(
+        'Edad',
         jugador.age, 
         jugadorSecreto.age
     );
     var celdaOverall = crearCeldaNumerica(
+        'Ov',
         jugador.overall, 
         jugadorSecreto.overall
     );
     var celdaAltura = crearCeldaNumerica(
+        'Alt',
         jugador.heightCm, 
         jugadorSecreto.heightCm
     );
@@ -205,24 +211,38 @@ function crearFilaIntentoEnTablero(jugador) {
     tablero.appendChild(fila);
 }
 
-function crearCeldaAtributo(valor, coincide) {
+function crearCeldaAtributo(etiqueta, valor, coincide) {
     var celda = document.createElement('div');
     celda.className = 'celda-atributo ' + (coincide ? 'celda-correcto' : 'celda-incorrecto');
-    celda.textContent = valor;
+    var spanEtiqueta = document.createElement('span');
+    spanEtiqueta.className = 'etiqueta-celda';
+    spanEtiqueta.textContent = etiqueta;
+    var spanValor = document.createElement('span');
+    spanValor.className = 'valor-celda';
+    spanValor.textContent = valor;
+    celda.appendChild(spanEtiqueta);
+    celda.appendChild(spanValor);
     return celda;
 }
 
-function crearCeldaNumerica(valorIntentado, valorSecreto) {
+function crearCeldaNumerica(etiqueta, valorIntentado, valorSecreto) {
     var celda = document.createElement('div');
     var coincide = valorIntentado === valorSecreto;
     celda.className = 'celda-atributo ' + (coincide ? 'celda-correcto' : 'celda-incorrecto');
-    if(coincide) {
-        celda.textContent = valorIntentado;
-    } else if(valorSecreto > valorIntentado) {
-        celda.textContent = valorIntentado + ' 🠝'
+    var spanEtiqueta = document.createElement('span');
+    spanEtiqueta.className = 'etiqueta-celda';
+    spanEtiqueta.textContent = etiqueta;
+    var spanValor = document.createElement('span');
+    spanValor.className = 'valor-celda';
+    if (coincide) {
+        spanValor.textContent = valorIntentado;
+    } else if (valorSecreto > valorIntentado) {
+        spanValor.textContent = valorIntentado + ' 🠝';
     } else {
-        celda.textContent = valorIntentado + ' 🠟'
+        spanValor.textContent = valorIntentado + ' 🠟';
     }
+    celda.appendChild(spanEtiqueta);
+    celda.appendChild(spanValor);
     return celda;
 }
 
