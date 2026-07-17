@@ -21,6 +21,14 @@
                         <input type="text" id="nombre-usuario" placeholder="Ej: Juan Perez" autocomplete="off">
                         <span id="error-nombre" class="texto-error clase-oculta">El nombre debe tener al menos 3 letras.</span>
                     </div>
+                    <div class="grupo-input">
+                        <label for="selector-dificultad" class="etiqueta-formulario">Dificultad:</label>
+                        <select id="selector-dificultad" class="selector-dificultad-input">
+                            <option value="facil">Fácil (Con Foto Desenfocada)</option>
+                            <option value="medio">Medio (Sin Foto - Atributos Ocultos)</option>
+                            <option value="dificil">Difícil (Sin Pistas Extras)</option>
+                        </select>
+                    </div>
                     <button type="submit" id="boton-jugar" class="boton-primario">Comenzar Partida</button>
                 </form>
             </div>
@@ -60,6 +68,19 @@
             <h3 id="modal-titulo">Mensaje</h3>
             <p id="modal-mensaje">Contenido de la alerta...</p>
             <button id="modal-boton-cerrar" class="boton-primario">Entendido</button>
+        </div>
+    </div>
+
+    <div id="modal-historial" class="modal clase-oculta">
+        <div class="modal-ancho">
+            <h3>Historial de Partidas 🏆</h3>
+            <div class="panel-acciones-historial">
+                <button id="ordenar-fecha" class="boton-primario">Ordenar por Fecha</button>
+                <button id="ordenar-intentos" class="boton-primario">Ordenar por Intentos</button>
+            </div>
+            <div id="lista-partidas" class="contenedor-lista-partidas">
+            </div>
+            <button id="modal-historial-cerrar" class="boton-primario">Cerrar Historial</button>
         </div>
     </div>
     <script src="js/api.js"></script>
