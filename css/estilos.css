@@ -308,6 +308,7 @@ body{
     outline: none;
     resize: vertical;
     margin-right: 10px;
+    box-sizing: border-box;
 }
 
 .area-texto:focus{
@@ -331,6 +332,24 @@ body{
 .valor-celda {
     font-size: 0.85rem;
     word-break: break-word;
+}
+
+.contenedor-foto-secreta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.foto-secreta {
+    width: 120px;
+    height: 120px;
+    border: 2px solid #334155;    
+    border-radius: 50%;
+    background-color: #1e293b;
+    object-fit: cover;
+    transition: filter 0.5s ease;
 }
 
 .clase-oculta{

@@ -13,6 +13,7 @@ var pantallaRegistro = document.getElementById('pantalla-registro');
 var pantallaJuego = document.getElementById('pantalla-juego');
 var elementoIntentos = document.getElementById('intentos-restantes');
 var botonReiniciar = document.getElementById('boton-reiniciar');
+var fotoJugadorSecreto = document.getElementById('foto-jugador-secreto');
 
 function inicializarJuego(){
     formularioInicio.addEventListener('submit', manejarInicioSesion);
@@ -62,6 +63,10 @@ function comenzarPartida() {
     elementoIntentos.textContent = intentosRestantes;
     pantallaRegistro.classList.add('clase-oculta');
     pantallaJuego.classList.remove('clase-oculta');
+
+    fotoJugadorSecreto.src = jugadorSecreto.photo;
+    fotoJugadorSecreto.style.filter = 'blur(20px)';
+
     inputBusqueda.value = '';
     inputBusqueda.disabled = false;
     inputBusqueda.focus();
@@ -69,6 +74,11 @@ function comenzarPartida() {
     detenerTemporizador();
     document.getElementById('temporizador').textContent = '00:00';
     inicializarBuscador();
+}
+
+function actualizarDesenfoqueFoto() {
+    var pxBlur = intentosRestantes * 2.5;
+    fotoJugadorSecreto.style.filter = 'blur(' + (pxBlur) + 'px)';
 }
 
 function reiniciarPartida() {
@@ -148,6 +158,7 @@ function procesarIntento(jugadorIntentado){
     historialIntentos.push(jugadorIntentado.id);
     intentosRestantes = intentosRestantes - 1;
     elementoIntentos.textContent = intentosRestantes;
+    actualizarDesenfoqueFoto();
     crearFilaIntentoEnTablero(jugadorIntentado);
     if(jugadorIntentado.id === jugadorSecreto.id){
         finalizarPartida(true);
@@ -249,6 +260,7 @@ function crearCeldaNumerica(etiqueta, valorIntentado, valorSecreto) {
 function finalizarPartida(haGanado) {
     detenerTemporizador();
     inputBusqueda.disabled = true;
+    fotoJugadorSecreto.style.filter = 'blur(0px)'
     var tiempoTotal = formatearTiempo(obtenerSegundosTranscurridos());
     if (haGanado) {
         var intentosUsados = 8 - intentosRestantes;
