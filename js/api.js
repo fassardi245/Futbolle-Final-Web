@@ -1,5 +1,4 @@
 'use strict';
-
 var API_BASE_URL = 'https://futbolle-daw-uai-2026.onrender.com/api/players';
 
 function obtenerJugadorSecreto(callbackExito, callbackError) {

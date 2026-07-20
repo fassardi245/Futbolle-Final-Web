@@ -11,6 +11,7 @@
     <div id="contenedor-principal" class="contenedor-principal">
         <header class="encabezado-juego">
             <h1>Futbolle ⚽</h1>
+            <button id="boton-tema" class="boton-tema">🌓 Cambiar Modo</button>
         </header>
         <section id="pantalla-registro" class="seccion-pantalla">
             <div class="tarjeta-formulario">
@@ -35,7 +36,10 @@
         </section>
         <section id="pantalla-juego" class="seccion-pantalla clase-oculta">
             <div class="contenedor-foto-secreta">
-                <img id="foto-jugador-secreto" src="" alt="Jugador Secreto" class="foto-secreta"     referrerpolicy="no-referrer">
+                <img id="foto-jugador-secreto" src="" alt="Jugador Secreto" class="foto-secreta" referrerpolicy="no-referrer">
+            </div>
+            <div id="contenedor-pistas-medio" class="tarjeta-formulario clase-oculta">
+                <p id="texto-pista-medio">Pistas reveladas: Ninguna aún.</p>
             </div>
             <div class="panel-info">
                 <div class="info-item">
@@ -59,7 +63,11 @@
             </div>
             <div class="panel-acciones">
                 <button id="boton-reiniciar" class="boton-secundario">Reiniciar Partida</button>
+                <button id="boton-ver-historial" class="boton-secundario">Ver Historial 🏆</button>
+            </div>
+            <div class="panel-acciones2">
                 <a href="contacto.html" class="enlace-contacto">Contacto</a>
+                <a href="https://github.com/fassardi245/Futbolle-Final-Web" target="_blank" class="enlace-contacto">GitHub 💻</a>
             </div>
         </section>
     </div>
@@ -73,14 +81,14 @@
 
     <div id="modal-historial" class="modal clase-oculta">
         <div class="modal-ancho">
-            <h3>Historial de Partidas 🏆</h3>
+            <h3 class="titulo-historial">Historial de Partidas 🏆</h3>
             <div class="panel-acciones-historial">
-                <button id="ordenar-fecha" class="boton-primario">Ordenar por Fecha</button>
-                <button id="ordenar-intentos" class="boton-primario">Ordenar por Intentos</button>
+                <button id="ordenar-fecha" class="boton-ordenar-historial">Ordenar por Fecha</button>
+                <button id="ordenar-intentos" class="boton-ordenar-historial">Ordenar por Intentos</button>
             </div>
             <div id="lista-partidas" class="contenedor-lista-partidas">
             </div>
-            <button id="modal-historial-cerrar" class="boton-primario">Cerrar Historial</button>
+            <button id="modal-historial-cerrar" class="boton-cerrar-historial">Cerrar Historial</button>
         </div>
     </div>
     <script src="js/api.js"></script>

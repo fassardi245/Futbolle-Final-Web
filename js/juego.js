@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 var jugadorSecreto = null;
 var nombreUsuario = '';
 var intentosRestantes = 8;
@@ -6,6 +6,7 @@ var juegoIniciado = false;
 var historialIntentos = [];
 var dificultadSeleccionada = 'facil';
 var puntosPartida = 0;
+var jugadoresSugeridos = [];
 var selectDificultad = document.getElementById('selector-dificultad');
 var inputBusqueda = document.getElementById('input-busqueda');
 var listaAutocompletado = document.getElementById('lista-autocompletado');
@@ -17,6 +18,15 @@ var pantallaJuego = document.getElementById('pantalla-juego');
 var elementoIntentos = document.getElementById('intentos-restantes');
 var botonReiniciar = document.getElementById('boton-reiniciar');
 var fotoJugadorSecreto = document.getElementById('foto-jugador-secreto');
+var btnVerHistorial = document.getElementById('boton-ver-historial');
+var modalHistorial = document.getElementById('modal-historial');
+var btnCerrarHistorial = document.getElementById('modal-historial-cerrar');
+var btnOrdenFecha = document.getElementById('ordenar-fecha');
+var btnOrdenIntentos = document.getElementById('ordenar-intentos');
+var listaPartidasContenedor = document.getElementById('lista-partidas');
+var formularioBusqueda = document.getElementById('formulario-busqueda');
+var contenedorPistasMedio = document.getElementById('contenedor-pistas-medio');
+var textoPistaMedio = document.getElementById('texto-pista-medio');
 
 function limpiarErrorNombre(){
     errorNombre.classList.add('clase-oculta');
@@ -29,9 +39,20 @@ function validarNombreAlSalir(){
     }
 }
 
-function actualizarDesenfoqueFoto() {
-    var pxBlur = intentosRestantes * 2.5;
-    fotoJugadorSecreto.style.filter = 'blur(' + (pxBlur) + 'px)';
+function actualizarPistasPasivas() {
+    var pxBlur;
+    if (dificultadSeleccionada === 'facil') {
+        pxBlur = intentosRestantes * 2.5;
+        fotoJugadorSecreto.style.filter = 'blur(' + (pxBlur) + 'px)';
+    } else if (dificultadSeleccionada === 'medio') {
+        if (intentosRestantes === 6) {
+            textoPistaMedio.textContent = 'Pista extra: El jugador secreto tiene una Edad de ' + jugadorSecreto.age + ' años.';
+        } else if (intentosRestantes === 4) {
+            textoPistaMedio.textContent = 'Pistas extras: Edad: ' + jugadorSecreto.age + ' | Altura: ' + jugadorSecreto.heightCm + ' cm.';
+        } else if (intentosRestantes === 2) {
+            textoPistaMedio.textContent = 'Pistas extras: Edad: ' + jugadorSecreto.age + ' | Altura: ' + jugadorSecreto.heightCm + ' cm | Overall: ' + jugadorSecreto.overall + '.';
+        }
+    }
 }
 
 function comprobarJugadorRepetido(id) {
@@ -111,7 +132,7 @@ function crearCeldaAtributo(etiqueta, valor, coincide) {
     return celda;
 }
 
-function crearCellicaNumerica(etiqueta, valorIntentado, valorSecreto) {
+function crearCeldaNumerica(etiqueta, valorIntentado, valorSecreto) {
     var celda = document.createElement('div');
     var coincide = valorIntentado === valorSecreto;
     celda.className = 'celda-atributo ' + (coincide ? 'celda-correcto' : 'celda-incorrecto');
@@ -133,15 +154,23 @@ function crearCellicaNumerica(etiqueta, valorIntentado, valorSecreto) {
 }
 
 function crearFilaIntentoEnTablero(jugador) {
-    var tablero = document.getElementById('tablero-intentos');
-    var fila = document.createElement('div');
+    var tablero;
+    var fila;
+    var celdaNac;
+    var celdaClub;
+    var celdaPos;
+    var celdaEdad;
+    var celdaOverall;
+    var celdaAltura;
+    tablero = document.getElementById('tablero-intentos');
+    fila = document.createElement('div');
     fila.className = 'fila-intento';
-    var celdaNac = crearCeldaAtributo('Nac', jugador.nationality, jugador.nationality === jugadorSecreto.nationality);
-    var celdaClub = crearCeldaAtributo('Club', dificultadSeleccionada === 'dificil' ? '???' : jugador.club, jugador.club === jugadorSecreto.club);
-    var celdaPos = crearCeldaAtributo('Pos', jugador.position, jugador.position === jugadorSecreto.position);
-    var celdaEdad = crearCellicaNumerica('Edad', jugador.age, jugadorSecreto.age);
-    var celdaOverall = crearCellicaNumerica('Ov', jugador.overall, jugadorSecreto.overall);
-    var celdaAltura = crearCellicaNumerica('Alt', jugador.heightCm, jugadorSecreto.heightCm);
+    celdaNac = crearCeldaAtributo('Nac', jugador.nationality, jugador.nationality === jugadorSecreto.nationality);
+    celdaClub = crearCeldaAtributo('Club', jugador.club, jugador.club === jugadorSecreto.club);
+    celdaPos = crearCeldaAtributo('Pos', jugador.position, jugador.position === jugadorSecreto.position);
+    celdaEdad = crearCeldaNumerica('Edad', jugador.age, jugadorSecreto.age);
+    celdaOverall = crearCeldaNumerica('Ov', jugador.overall, jugadorSecreto.overall);
+    celdaAltura = crearCeldaNumerica('Alt', jugador.heightCm, jugadorSecreto.heightCm);
     fila.appendChild(celdaNac);
     fila.appendChild(celdaClub);
     fila.appendChild(celdaPos);
@@ -163,7 +192,7 @@ function procesarIntento(jugadorIntentado){
     historialIntentos.push(jugadorIntentado.id);
     intentosRestantes = intentosRestantes - 1;
     elementoIntentos.textContent = intentosRestantes;
-    actualizarDesenfoqueFoto();
+    actualizarPistasPasivas();
     crearFilaIntentoEnTablero(jugadorIntentado);
     if(jugadorIntentado.id === jugadorSecreto.id){
         finalizarPartida(true);
@@ -181,28 +210,51 @@ function seleccionarJugador(jugador){
     procesarIntento(jugador);
 }
 
-function manejarClicFueraBuscardor(evento){
-    if (evento.target !== inputBusqueda && evento.target !== listaAutocompletado){
-        listaAutocompletado.classList.add('clase-oculta')
+function realizarProcesamientoBusqueda(jugadores) {
+    jugadoresSugeridos = jugadores;
+    renderizarAutocompletado(jugadores);
+}
+
+function manejarErrorBusqueda(error) {
+    mostrarModal('Error de búsqueda', 'Hubo un problema al buscar los jugadores.');
+}
+
+function manejarEscrituraBuscador() {
+    var consulta;
+    consulta = inputBusqueda.value.trim();
+    if (consulta.length < 2) {
+        jugadoresSugeridos = [];
+        listaAutocompletado.innerHTML = '';
+        listaAutocompletado.classList.add('clase-oculta');
+        return;
+    }
+    buscarJugadores(consulta, realizarProcesamientoBusqueda, manejarErrorBusqueda);
+}
+
+function manejarClicFueraBuscardor(evento) {
+    if (evento.target !== inputBusqueda && evento.target !== listaAutocompletado) {
+        listaAutocompletado.classList.add('clase-oculta');
     }
 }
 
-function crearManejadorSeleccion(jugador){
-    return function() {
+function crearManejadorSeleccion(jugador) {
+    return function () {
         seleccionarJugador(jugador);
     };
 }
 
-function renderizarAutocompletado(jugadores){
+function renderizarAutocompletado(jugadores) {
+    var i;
+    var jugador;
+    var elementoLi;
     listaAutocompletado.innerHTML = '';
-    if(jugadores.length === 0) {
+    if (jugadores.length === 0) {
         listaAutocompletado.classList.add('clase-oculta');
         return;
     }
-    var i;
-    for(i = 0; i < jugadores.length; i++){
-        var jugador = jugadores[i];
-        var elementoLi = document.createElement('li');
+    for (i = 0; i < jugadores.length; i = i + 1) {
+        jugador = jugadores[i];
+        elementoLi = document.createElement('li');
         elementoLi.textContent = jugador.name;
         elementoLi.setAttribute('data-id', jugador.id);
         elementoLi.addEventListener('click', crearManejadorSeleccion(jugador));
@@ -211,19 +263,32 @@ function renderizarAutocompletado(jugadores){
     listaAutocompletado.classList.remove('clase-oculta');
 }
 
-function manejarEscrituraBuscador(){
-    var consulta = inputBusqueda.value.trim();
-    if (consulta.length < 2) {
-        listaAutocompletado.innerHTML = '';
-        listaAutocompletado.classList.add('clase-oculta');
-        return;
-    }
-    buscarJugadores(consulta, function(jugadores) { renderizarAutocompletado(jugadores); }, function(error) { mostrarModal('Error de búsqueda', 'Hubo un problema al buscar los jugadores.'); });
-}
-
 function inicializarBuscador() {
     inputBusqueda.addEventListener('input', manejarEscrituraBuscador);
     document.addEventListener('click', manejarClicFueraBuscardor);
+}
+
+function manejarSubmitBuscador(evento) {
+    var consulta;
+    var i;
+    var jugadorEncontrado;
+    evento.preventDefault();
+    consulta = inputBusqueda.value.trim().toLowerCase();
+    if (consulta === '') {
+        mostrarModal('Intento Vacío', 'Por favor, escribe el nombre de un jugador.');
+        return;
+    }
+    jugadorEncontrado = null;
+    for (i = 0; i < jugadoresSugeridos.length; i = i + 1) {
+        if (jugadoresSugeridos[i].name.toLowerCase() === consulta) {
+            jugadorEncontrado = jugadoresSugeridos[i];
+        }
+    }
+    if (jugadorEncontrado !== null) {
+        seleccionarJugador(jugadorEncontrado);
+    } else {
+        mostrarModal('Jugador No Válido', 'El jugador ingresado no coincide con las sugerencias. Por favor, selecciónalo de la lista desplegable.');
+    }
 }
 
 function comenzarPartida() {
@@ -237,8 +302,14 @@ function comenzarPartida() {
         fotoJugadorSecreto.src = jugadorSecreto.photo;
         fotoJugadorSecreto.style.filter = 'blur(20px)';
         fotoJugadorSecreto.classList.remove('clase-oculta');
+        contenedorPistasMedio.classList.add('clase-oculta');
+    } else if (dificultadSeleccionada === 'medio') {
+        fotoJugadorSecreto.classList.add('clase-oculta');
+        contenedorPistasMedio.classList.remove('clase-oculta');
+        textoPistaMedio.textContent = 'Pistas reveladas: Ninguna aún. Realiza intentos para desbloquear cualidades.';
     } else {
         fotoJugadorSecreto.classList.add('clase-oculta');
+        contenedorPistasMedio.classList.add('clase-oculta');
     }
     inputBusqueda.value = '';
     inputBusqueda.disabled = false;
@@ -269,11 +340,117 @@ function reiniciarPartida() {
     solicitarJugadorSecreto();
 }
 
+function renderizarHistorial() {
+    var listaPartidasContenedor = document.getElementById('lista-partidas');
+    var historial = JSON.parse(localStorage.getItem('futbolle_historial')) || [];
+    listaPartidasContenedor.innerHTML = '';
+    if (historial.length === 0) {
+        var sinDatos = document.createElement('p');
+        sinDatos.textContent = 'No hay partidas registradas aún.';
+        listaPartidasContenedor.appendChild(sinDatos);
+        return;
+    }
+    var i;
+    for (i = 0; i < historial.length; i = i + 1) {
+        var partida = historial[i];
+        var tarjeta = document.createElement('div');
+        tarjeta.className = 'tarjeta-partida';
+        var tituloPartida = document.createElement('strong');
+        tituloPartida.textContent = partida.usuario + ' - ';
+        var spanResultado = document.createElement('span');
+        spanResultado.textContent = partida.resultado;
+        spanResultado.className = partida.resultado === 'Ganó' ? 'texto-gano' : 'texto-perdio';
+        tituloPartida.appendChild(spanResultado);
+        var infoContenedor = document.createElement('div');
+        infoContenedor.className = 'tarjeta-partida-info';
+        var spanDetalles = document.createElement('span');
+        spanDetalles.textContent = 'Intentos: ' + partida.intentos + ' | Puntos: ' + partida.puntos + ' | Tiempo: ' + partida.tiempo;
+        var spanFecha = document.createElement('span');
+        spanFecha.textContent = partida.fecha;
+        infoContenedor.appendChild(spanDetalles);
+        infoContenedor.appendChild(spanFecha);
+        tarjeta.appendChild(tituloPartida);
+        tarjeta.appendChild(infoContenedor);
+        listaPartidasContenedor.appendChild(tarjeta);
+    }
+}
+
+function abrirHistorial() {
+    renderizarHistorial();
+    modalHistorial.classList.remove('clase-oculta');
+}
+
+function cerrarHistorial() {
+        modalHistorial.classList.add('clase-oculta');
+
+}
+
+function ordenarPorFecha() {
+    var historial = JSON.parse(localStorage.getItem('futbolle_historial')) || [];
+    var i;
+    var j;
+    var temporal;
+    for (i = 0; i < historial.length - 1; i = i + 1) {
+        for (j = 0; j < historial.length - 1 - i; j = j + 1) {
+            if (new Date(historial[j].fecha) < new Date(historial[j + 1].fecha)) {
+                temporal = historial[j];
+                historial[j] = historial[j + 1];
+                historial[j + 1] = temporal;
+            }
+        }
+    }
+    localStorage.setItem('futbolle_historial', JSON.stringify(historial));
+    renderizarHistorial();
+}
+
+function ordenarPorIntentos() {
+    var historial = JSON.parse(localStorage.getItem('futbolle_historial')) || [];
+    var i;
+    var j;
+    var temporal;
+    for (i = 0; i < historial.length - 1; i = i + 1) {
+        for (j = 0; j < historial.length - 1 - i; j = j + 1) {
+            if (historial[j].intentos > historial[j + 1].intentos) {
+                temporal = historial[j];
+                historial[j] = historial[j + 1];
+                historial[j + 1] = temporal;
+            }
+        }
+    }
+    localStorage.setItem('futbolle_historial', JSON.stringify(historial));
+    renderizarHistorial();
+}
+
+function conmutarTema() {
+    var cuerpo = document.body;
+    if (cuerpo.classList.contains('modo-claro')) {
+        cuerpo.classList.remove('modo-claro');
+        localStorage.setItem('futbolle_tema', 'oscuro');
+    } else {
+        cuerpo.classList.add('modo-claro');
+        localStorage.setItem('futbolle_tema', 'claro');
+    }
+}
+
+function cargarTemaPreferido() {
+    var temaGuardado = localStorage.getItem('futbolle_tema');
+    var cuerpo = document.body;
+    if (temaGuardado === 'claro') {
+        cuerpo.classList.add('modo-claro');
+    }
+}
+
 function inicializarJuego(){
     formularioInicio.addEventListener('submit', manejarInicioSesion);
+    formularioBusqueda.addEventListener('submit', manejarSubmitBuscador);
     inputNombre.addEventListener('focus', limpiarErrorNombre);
     inputNombre.addEventListener('blur', validarNombreAlSalir);
-    botonReiniciar.addEventListener('click', reiniciarPartida); 
+    botonReiniciar.addEventListener('click', reiniciarPartida);
+    btnVerHistorial.addEventListener('click', abrirHistorial);
+    btnCerrarHistorial.addEventListener('click', cerrarHistorial);
+    btnOrdenFecha.addEventListener('click', ordenarPorFecha);
+    btnOrdenIntentos.addEventListener('click', ordenarPorIntentos);
+    document.getElementById('boton-tema').addEventListener('click', conmutarTema);
 }
 
 inicializarJuego();
