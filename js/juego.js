@@ -112,8 +112,10 @@ function finalizarPartida(haGanado) {
     var score = calcularPuntuacion(haGanado, intentosUsados, segundosTotales);
     guardarPartidaEnHistorial(haGanado, intentosUsados, segundosTotales);
     if (haGanado) {
+        reproducirSonido('exito');
         mostrarModal('¡Ganaste! 🎉', 'Adivinaste a ' + jugadorSecreto.name + ' en ' + intentosUsados + ' intentos. Puntos: ' + score + '. Tiempo: ' + tiempoTotal + '.');
     } else {
+        reproducirSonido('derrota');
         mostrarModal('Fin de la partida 😢', 'Te quedaste sin intentos. El jugador secreto era: ' + jugadorSecreto.name + '.');
     }
 }
@@ -197,6 +199,9 @@ function procesarIntento(jugadorIntentado){
     if(jugadorIntentado.id === jugadorSecreto.id){
         finalizarPartida(true);
         return;
+    }
+    if (jugadorIntentado.id !== jugadorSecreto.id && intentosRestantes > 0) {
+        reproducirSonido('error');
     }
     if(intentosRestantes === 0){
         finalizarPartida(false);
@@ -317,6 +322,7 @@ function comenzarPartida() {
     document.getElementById('tablero-intentos').innerHTML = '';
     detenerTemporizador();
     document.getElementById('temporizador').textContent = '00:00';
+    actualizarPistasPasivas();
     inicializarBuscador();
 }
 
@@ -437,6 +443,20 @@ function cargarTemaPreferido() {
     var cuerpo = document.body;
     if (temaGuardado === 'claro') {
         cuerpo.classList.add('modo-claro');
+    }
+}
+
+function reproducirSonido(tipo) {
+    var audio;
+    if (tipo === 'exito') {
+        audio = new Audio('audio/exito.mp3');
+    } else if (tipo === 'error') {
+        audio = new Audio('audio/error.mp3');
+    } else if (tipo === 'derrota') {
+        audio = new Audio('audio/derrota.mp3');
+    }
+    if (audio) {
+        audio.play().catch(function () {});
     }
 }
 
