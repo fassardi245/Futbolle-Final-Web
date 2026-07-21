@@ -6,7 +6,7 @@ body{
     padding: 20px;
     background-color: #0f172a;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    color: #f8fafc
+    color: #f8fafc;
 }
 
 .contenedor-principal{
@@ -473,7 +473,7 @@ body{
     font-size: 0.85rem;
     font-weight: 600;
     color: #f8fafc;
-    cursor: pointer;;
+    cursor: pointer;
 }
 
 .boton-tema:hover {
@@ -525,13 +525,50 @@ body.modo-claro .enlace-contacto {
     color: #0f172a;
 }
 
+body.modo-claro .grupo-input input,
+body.modo-claro .area-texto,
+body.modo-claro .selector-dificultad-input {
+    border-color: #cbd5e1;
+    background-color: #f8fafc;
+    color: #0f172a;
+}
+
+body.modo-claro .etiqueta-formulario {
+    color: #475569;
+}
+
 .clase-oculta{
     display: none;
 }
 
 @media (max-width: 480px) {
+    .encabezado-juego,
+    .panel-acciones,
+    .panel-acciones-historial,
+    .tarjeta-partida-info {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .encabezado-juego {
+        align-items: center;
+    }
+
+    .boton-secundario {
+        width: 100%;
+    }
+
+    .fila-intento {
+        gap: 3px;
+    }
+
     .celda-atributo {
+        height: 68px;
+        padding: 2px;
+        font-size: 0.6rem;
+    }
+
+    .valor-celda {
         font-size: 0.65rem;
-        height: 60px;
     }
 }

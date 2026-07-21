@@ -6,6 +6,7 @@ var inputMensaje = document.getElementById('contacto-mensaje');
 var errorNombre = document.getElementById('error-contacto-nombre');
 var errorEmail = document.getElementById('error-contacto-email');
 var errorMensaje = document.getElementById('error-contacto-mensaje');
+var botonTema = document.getElementById('boton-tema');
 
 function esLetraONumero(caracter) {
     var codigo = caracter.charCodeAt(0);
@@ -101,6 +102,8 @@ function manejarEnvioFormulario(evento) {
 }
 
 function inicializarContacto() {
+    cargarTemaPreferido();
+
     formulario.addEventListener('submit', manejarEnvioFormulario);
     inputNombre.addEventListener('focus', limpiarErrorNombre);
     inputEmail.addEventListener('focus', limpiarErrorEmail);
@@ -108,5 +111,7 @@ function inicializarContacto() {
     inputNombre.addEventListener('blur', validarNombre);
     inputEmail.addEventListener('blur', validarEmail);
     inputMensaje.addEventListener('blur', validarMensaje);
+    botonTema.addEventListener('click', conmutarTema);
 }
+
 inicializarContacto();

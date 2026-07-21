@@ -5,7 +5,6 @@ var intentosRestantes = 8;
 var juegoIniciado = false; 
 var historialIntentos = [];
 var dificultadSeleccionada = 'facil';
-var puntosPartida = 0;
 var jugadoresSugeridos = [];
 var selectDificultad = document.getElementById('selector-dificultad');
 var inputBusqueda = document.getElementById('input-busqueda');
@@ -66,54 +65,77 @@ function comprobarJugadorRepetido(id) {
 }
 
 function calcularPuntuacion(haGanado, intentosUsados, tiempoSegundos) {
+    var puntosBase;
+    var restaIntentos;
+    var bonusTiempo;
+    var total;
     if (!haGanado) {
         return 0;
     }
-    var puntosBase = 60;
+    puntosBase = 60;
     if (dificultadSeleccionada === 'medio') {
         puntosBase = 80;
     } else if (dificultadSeleccionada === 'dificil') {
         puntosBase = 100;
     }
-    var restaIntentos = (intentosUsados - 1) * 10;
-    var bonusTiempo = 0;
+    restaIntentos = (intentosUsados - 1) * 10;
+    bonusTiempo = 0;
     if (tiempoSegundos < 60) {
         bonusTiempo = 20;
     } else if (tiempoSegundos < 120) {
         bonusTiempo = 10;
     }
-    var total = puntosBase - restaIntentos + bonusTiempo;
+    total = puntosBase - restaIntentos + bonusTiempo;
     return total < 10 ? 10 : total;
 }
 
 function guardarPartidaEnHistorial(haGanado, intentosUsados, tiempoSegundos) {
-    var historial = JSON.parse(localStorage.getItem('futbolle_historial')) || [];
-    var nuevaPartida = {
+    var historial;
+    var nuevaPartida;
+    var ahora;
+
+    historial = JSON.parse(localStorage.getItem('futbolle_historial')) || [];
+    ahora = new Date();
+
+    nuevaPartida = {
         usuario: nombreUsuario,
         resultado: haGanado ? 'Ganó' : 'Perdió',
         intentos: intentosUsados,
         tiempo: formatearTiempo(tiempoSegundos),
-        puntos: calcularPuntuacion(haGanado, intentosUsados, tiempoSegundos),
-        fecha: new Date().toLocaleString()
+        puntos: calcularPuntuacion(
+            haGanado,
+            intentosUsados,
+            tiempoSegundos
+        ),
+        fecha: ahora.toLocaleString(),
+        timestamp: ahora.getTime()
     };
+
     historial.push(nuevaPartida);
-    localStorage.setItem('futbolle_historial', JSON.stringify(historial));
+    localStorage.setItem(
+        'futbolle_historial',
+        JSON.stringify(historial)
+    );
 }
 
 function finalizarPartida(haGanado) {
+    var segundosTotales;
+    var intentosUsados;
+    var tiempoTotal;
+    var puntaje;
     detenerTemporizador();
     inputBusqueda.disabled = true;
     if (dificultadSeleccionada === 'facil') {
         fotoJugadorSecreto.style.filter = 'blur(0px)';
     }
-    var segundosTotales = obtenerSegundosTranscurridos();
-    var intentosUsados = 8 - intentosRestantes;
-    var tiempoTotal = formatearTiempo(segundosTotales);
-    var score = calcularPuntuacion(haGanado, intentosUsados, segundosTotales);
+    segundosTotales = obtenerSegundosTranscurridos();
+    intentosUsados = 8 - intentosRestantes;
+    tiempoTotal = formatearTiempo(segundosTotales);
+    puntaje = calcularPuntuacion(haGanado, intentosUsados, segundosTotales);
     guardarPartidaEnHistorial(haGanado, intentosUsados, segundosTotales);
     if (haGanado) {
         reproducirSonido('exito');
-        mostrarModal('¡Ganaste! 🎉', 'Adivinaste a ' + jugadorSecreto.name + ' en ' + intentosUsados + ' intentos. Puntos: ' + score + '. Tiempo: ' + tiempoTotal + '.');
+        mostrarModal('¡Ganaste! 🎉', 'Adivinaste a ' + jugadorSecreto.name + ' en ' + intentosUsados + ' intento/s. Puntos: ' + puntaje + '. Tiempo: ' + tiempoTotal + '.');
     } else {
         reproducirSonido('derrota');
         mostrarModal('Fin de la partida 😢', 'Te quedaste sin intentos. El jugador secreto era: ' + jugadorSecreto.name + '.');
@@ -122,11 +144,12 @@ function finalizarPartida(haGanado) {
 
 function crearCeldaAtributo(etiqueta, valor, coincide) {
     var celda = document.createElement('div');
-    celda.className = 'celda-atributo ' + (coincide ? 'celda-correcto' : 'celda-incorrecto');
     var spanEtiqueta = document.createElement('span');
+    var spanValor;
+    celda.className = 'celda-atributo ' + (coincide ? 'celda-correcto' : 'celda-incorrecto');
     spanEtiqueta.className = 'etiqueta-celda';
     spanEtiqueta.textContent = etiqueta;
-    var spanValor = document.createElement('span');
+    spanValor = document.createElement('span');
     spanValor.className = 'valor-celda';
     spanValor.textContent = valor;
     celda.appendChild(spanEtiqueta);
@@ -242,10 +265,27 @@ function manejarClicFueraBuscardor(evento) {
     }
 }
 
-function crearManejadorSeleccion(jugador) {
-    return function () {
-        seleccionarJugador(jugador);
-    };
+function manejarClicAutocompletado(evento) {
+    var elementoSeleccionado;
+    var idJugador;
+    var i;
+
+    elementoSeleccionado = evento.target;
+
+    if (elementoSeleccionado.tagName !== 'LI') {
+        return;
+    }
+
+    idJugador = Number(
+        elementoSeleccionado.getAttribute('data-id')
+    );
+
+    for (i = 0; i < jugadoresSugeridos.length; i = i + 1) {
+        if (jugadoresSugeridos[i].id === idJugador) {
+            seleccionarJugador(jugadoresSugeridos[i]);
+            return;
+        }
+    }
 }
 
 function renderizarAutocompletado(jugadores) {
@@ -262,15 +302,26 @@ function renderizarAutocompletado(jugadores) {
         elementoLi = document.createElement('li');
         elementoLi.textContent = jugador.name;
         elementoLi.setAttribute('data-id', jugador.id);
-        elementoLi.addEventListener('click', crearManejadorSeleccion(jugador));
         listaAutocompletado.appendChild(elementoLi);
     }
     listaAutocompletado.classList.remove('clase-oculta');
 }
 
 function inicializarBuscador() {
-    inputBusqueda.addEventListener('input', manejarEscrituraBuscador);
-    document.addEventListener('click', manejarClicFueraBuscardor);
+    inputBusqueda.addEventListener(
+        'input',
+        manejarEscrituraBuscador
+    );
+
+    listaAutocompletado.addEventListener(
+        'click',
+        manejarClicAutocompletado
+    );
+
+    document.addEventListener(
+        'click',
+        manejarClicFueraBuscardor
+    );
 }
 
 function manejarSubmitBuscador(evento) {
@@ -323,16 +374,30 @@ function comenzarPartida() {
     detenerTemporizador();
     document.getElementById('temporizador').textContent = '00:00';
     actualizarPistasPasivas();
-    inicializarBuscador();
+}
+
+function manejarJugadorSecretoObtenido(jugador) {
+    jugadorSecreto = jugador;
+    comenzarPartida();
+}
+
+function manejarErrorJugadorSecreto() {
+    mostrarModal(
+        'Error de Conexión',
+        'No se pudo obtener el jugador secreto desde el servidor. Intente nuevamente.'
+    );
 }
 
 function solicitarJugadorSecreto() {
-    obtenerJugadorSecreto(function(jugador) { jugadorSecreto = jugador; comenzarPartida(); }, function(error) { mostrarModal('Error de Conexión', 'No se pudo obtener el jugador secreto desde el servidor. Intente nuevamente.'); });
+    obtenerJugadorSecreto(
+        manejarJugadorSecretoObtenido,
+        manejarErrorJugadorSecreto
+    );
 }
 
 function manejarInicioSesion(evento) {
-    evento.preventDefault();
     var nombre = inputNombre.value.trim();
+    evento.preventDefault();
     if (nombre.length < 3) {
         errorNombre.classList.remove('clase-oculta');
         return;
@@ -347,31 +412,39 @@ function reiniciarPartida() {
 }
 
 function renderizarHistorial() {
-    var listaPartidasContenedor = document.getElementById('lista-partidas');
-    var historial = JSON.parse(localStorage.getItem('futbolle_historial')) || [];
+    var i;
+    var historial;
+    var sinDatos;
+    var partida;
+    var tarjeta;
+    var tituloPartida;
+    var spanResultado;
+    var infoContenedor;
+    var spanDetalles;
+    var spanFecha;
+    historial = JSON.parse(localStorage.getItem('futbolle_historial')) || [];
     listaPartidasContenedor.innerHTML = '';
     if (historial.length === 0) {
-        var sinDatos = document.createElement('p');
+        sinDatos = document.createElement('p');
         sinDatos.textContent = 'No hay partidas registradas aún.';
         listaPartidasContenedor.appendChild(sinDatos);
         return;
     }
-    var i;
     for (i = 0; i < historial.length; i = i + 1) {
-        var partida = historial[i];
-        var tarjeta = document.createElement('div');
+        partida = historial[i];
+        tarjeta = document.createElement('div');
         tarjeta.className = 'tarjeta-partida';
-        var tituloPartida = document.createElement('strong');
+        tituloPartida = document.createElement('strong');
         tituloPartida.textContent = partida.usuario + ' - ';
-        var spanResultado = document.createElement('span');
+        spanResultado = document.createElement('span');
         spanResultado.textContent = partida.resultado;
         spanResultado.className = partida.resultado === 'Ganó' ? 'texto-gano' : 'texto-perdio';
         tituloPartida.appendChild(spanResultado);
-        var infoContenedor = document.createElement('div');
+        infoContenedor = document.createElement('div');
         infoContenedor.className = 'tarjeta-partida-info';
-        var spanDetalles = document.createElement('span');
+        spanDetalles = document.createElement('span');
         spanDetalles.textContent = 'Intentos: ' + partida.intentos + ' | Puntos: ' + partida.puntos + ' | Tiempo: ' + partida.tiempo;
-        var spanFecha = document.createElement('span');
+        spanFecha = document.createElement('span');
         spanFecha.textContent = partida.fecha;
         infoContenedor.appendChild(spanDetalles);
         infoContenedor.appendChild(spanFecha);
@@ -387,25 +460,39 @@ function abrirHistorial() {
 }
 
 function cerrarHistorial() {
-        modalHistorial.classList.add('clase-oculta');
+    modalHistorial.classList.add('clase-oculta');
 
 }
 
 function ordenarPorFecha() {
-    var historial = JSON.parse(localStorage.getItem('futbolle_historial')) || [];
+    var historial;
+    var timestampActual;
+    var timestampSiguiente;
+    var temporal;
     var i;
     var j;
-    var temporal;
+
+    historial = JSON.parse(
+        localStorage.getItem('futbolle_historial')
+    ) || [];
+
     for (i = 0; i < historial.length - 1; i = i + 1) {
         for (j = 0; j < historial.length - 1 - i; j = j + 1) {
-            if (new Date(historial[j].fecha) < new Date(historial[j + 1].fecha)) {
+            timestampActual = historial[j].timestamp || 0;
+            timestampSiguiente = historial[j + 1].timestamp || 0;
+            if (timestampActual < timestampSiguiente) {
                 temporal = historial[j];
                 historial[j] = historial[j + 1];
                 historial[j + 1] = temporal;
             }
         }
     }
-    localStorage.setItem('futbolle_historial', JSON.stringify(historial));
+
+    localStorage.setItem(
+        'futbolle_historial',
+        JSON.stringify(historial)
+    );
+
     renderizarHistorial();
 }
 
@@ -427,23 +514,11 @@ function ordenarPorIntentos() {
     renderizarHistorial();
 }
 
-function conmutarTema() {
-    var cuerpo = document.body;
-    if (cuerpo.classList.contains('modo-claro')) {
-        cuerpo.classList.remove('modo-claro');
-        localStorage.setItem('futbolle_tema', 'oscuro');
-    } else {
-        cuerpo.classList.add('modo-claro');
-        localStorage.setItem('futbolle_tema', 'claro');
-    }
-}
-
-function cargarTemaPreferido() {
-    var temaGuardado = localStorage.getItem('futbolle_tema');
-    var cuerpo = document.body;
-    if (temaGuardado === 'claro') {
-        cuerpo.classList.add('modo-claro');
-    }
+function manejarErrorSonido(error) {
+    console.log(
+        'No se pudo reproducir el sonido: '
+        + error.message
+    );
 }
 
 function reproducirSonido(tipo) {
@@ -456,11 +531,11 @@ function reproducirSonido(tipo) {
         audio = new Audio('audio/derrota.mp3');
     }
     if (audio) {
-        audio.play().catch(function () {});
+        audio.play().catch(manejarErrorSonido);
     }
 }
 
-function inicializarJuego(){
+function inicializarJuego() {
     formularioInicio.addEventListener('submit', manejarInicioSesion);
     formularioBusqueda.addEventListener('submit', manejarSubmitBuscador);
     inputNombre.addEventListener('focus', limpiarErrorNombre);
@@ -471,6 +546,8 @@ function inicializarJuego(){
     btnOrdenFecha.addEventListener('click', ordenarPorFecha);
     btnOrdenIntentos.addEventListener('click', ordenarPorIntentos);
     document.getElementById('boton-tema').addEventListener('click', conmutarTema);
+    inicializarBuscador();
+    cargarTemaPreferido();
 }
 
 inicializarJuego();
