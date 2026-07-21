@@ -7,6 +7,7 @@ var errorNombre = document.getElementById('error-contacto-nombre');
 var errorEmail = document.getElementById('error-contacto-email');
 var errorMensaje = document.getElementById('error-contacto-mensaje');
 var botonTema = document.getElementById('boton-tema');
+var enlaceVolverJuego = document.getElementById('volver-juego');
 
 function esLetraONumero(caracter) {
     var codigo = caracter.charCodeAt(0);
@@ -95,6 +96,11 @@ function manejarEnvioFormulario(evento) {
     }
 }
 
+function volverAlJuego(evento) {
+    evento.preventDefault();
+    window.history.back();
+}
+
 function inicializarContacto() {
     cargarTemaPreferido();
     formulario.addEventListener('submit', manejarEnvioFormulario);
@@ -105,6 +111,7 @@ function inicializarContacto() {
     inputEmail.addEventListener('blur', validarEmail);
     inputMensaje.addEventListener('blur', validarMensaje);
     botonTema.addEventListener('click', conmutarTema);
+    enlaceVolverJuego.addEventListener('click', volverAlJuego);
 }
 
 inicializarContacto();
