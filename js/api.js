@@ -5,7 +5,6 @@ function procesarRespuestaJugadorSecreto(respuesta) {
     if (!respuesta.ok) {
         throw new Error('Error al obtener el jugador secreto');
     }
-
     return respuesta.json();
 }
 
@@ -13,7 +12,6 @@ function procesarRespuestaBusqueda(respuesta) {
     if (!respuesta.ok) {
         throw new Error('Error al buscar jugadores');
     }
-
     return respuesta.json();
 }
 
@@ -30,17 +28,14 @@ function buscarJugadores(
     callbackError
 ) {
     var url;
-
     if (consulta.length < 2) {
         callbackExito([]);
         return;
     }
-
     url = API_BASE_URL
         + '/search?q='
         + encodeURIComponent(consulta)
         + '&limit=8';
-
     fetch(url)
         .then(procesarRespuestaBusqueda)
         .then(callbackExito)

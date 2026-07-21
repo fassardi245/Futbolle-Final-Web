@@ -85,17 +85,11 @@ function manejarEnvioFormulario(evento) {
     var mensajeEsValido = validarMensaje();
     if (nombreEsValido && emailEsValido && mensajeEsValido) {
         var destinatario = 'Tomas.ariaskarle@uai.edu.ar';
-
         var asunto = 'Contacto Futbolle - ' + inputNombre.value.trim();
-
         var cuerpo = 'Nombre: ' + inputNombre.value.trim() + '\n' + 'Email: ' + inputEmail.value.trim() + '\n\n' + 'Mensaje:\n' + inputMensaje.value.trim();
-
         var mailtoUrl = 'mailto:' + encodeURIComponent(destinatario) + '?subject=' + encodeURIComponent(asunto) + '&body=' + encodeURIComponent(cuerpo);
-
         window.location.href = mailtoUrl;
-
         mostrarModal('¡Formulario Validado!', 'Se abrirá tu gestor de correo electrónico para enviar el mensaje.');
-
     } else {
         mostrarModal('Formulario Inválido', 'Por favor, corrige los campos con errores antes de enviar.');
     }
@@ -103,7 +97,6 @@ function manejarEnvioFormulario(evento) {
 
 function inicializarContacto() {
     cargarTemaPreferido();
-
     formulario.addEventListener('submit', manejarEnvioFormulario);
     inputNombre.addEventListener('focus', limpiarErrorNombre);
     inputEmail.addEventListener('focus', limpiarErrorEmail);

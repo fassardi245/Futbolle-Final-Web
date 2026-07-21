@@ -26,10 +26,8 @@ function formatearTiempo(segundos) {
 
 function actualizarTemporizador() {
     var elementoTemporizador;
-
     elementoTemporizador = document.getElementById('temporizador');
     segundosTranscurridos = segundosTranscurridos + 1;
-
     elementoTemporizador.textContent = formatearTiempo(
         segundosTranscurridos
     );
@@ -37,13 +35,10 @@ function actualizarTemporizador() {
 
 function iniciarTemporizador() {
     var elementoTemporizador;
-
     elementoTemporizador = document.getElementById('temporizador');
-
     if (intervaloTemporizador !== null) {
         clearInterval(intervaloTemporizador);
     }
-
     segundosTranscurridos = 0;
     elementoTemporizador.textContent = '00:00';
 
@@ -67,7 +62,6 @@ function obtenerSegundosTranscurridos() {
 function conmutarTema() {
     var cuerpo;
     cuerpo = document.body;
-
     if (cuerpo.classList.contains('modo-claro')) {
         cuerpo.classList.remove('modo-claro');
         localStorage.setItem('futbolle_tema', 'oscuro');
@@ -80,10 +74,8 @@ function conmutarTema() {
 function cargarTemaPreferido() {
     var temaGuardado;
     var cuerpo;
-
     temaGuardado = localStorage.getItem('futbolle_tema');
     cuerpo = document.body;
-
     if (temaGuardado === 'claro') {
         cuerpo.classList.add('modo-claro');
     } else {

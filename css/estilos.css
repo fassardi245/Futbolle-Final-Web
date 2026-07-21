@@ -433,9 +433,11 @@ body{
     color: #f8fafc;
     transition: background-color 0.2s ease;
 }
+
 .boton-ordenar-historial:hover {
     background-color: #334155;
 }
+
 .boton-cerrar-historial {
     width: 100%;
     padding: 10px;
@@ -448,6 +450,7 @@ body{
     color: #f8fafc;
     transition: background-color 0.2s ease;
 }
+
 .boton-cerrar-historial:hover {
     background-color: #334155;
 }
@@ -479,10 +482,12 @@ body{
 .boton-tema:hover {
     background-color: #334155;
 }
+
 body.modo-claro {
     background-color: #ffffff;
     color: #0f172a;
 }
+
 body.modo-claro .tarjeta-formulario,
 body.modo-claro .panel-info,
 body.modo-claro .contenido-modal,
@@ -490,23 +495,27 @@ body.modo-claro .modal-ancho {
     border-color: #cbd5e1;
     background-color: #ffffff;
 }
+
 body.modo-claro .tarjeta-formulario h2,
 body.modo-claro .contenido-modal h3,
 body.modo-claro .modal-ancho h3 {
     color: #0f172a;
 }
+
 body.modo-claro .tarjeta-formulario p,
 body.modo-claro .info-item,
 body.modo-claro .contenido-modal p,
 body.modo-claro .tarjeta-partida-info {
     color: #475569;
 }
+
 body.modo-claro .grupo-busqueda input,
 body.modo-claro .tarjeta-partida {
     border-color: #cbd5e1;
     background-color: #f8fafc;
     color: #0f172a;
 }
+
 body.modo-claro .boton-secundario,
 body.modo-claro .boton-ordenar-historial,
 body.modo-claro .boton-cerrar-historial,
@@ -514,6 +523,7 @@ body.modo-claro .boton-tema {
     border-color: #cbd5e1;
     color: #0f172a;
 }
+
 body.modo-claro .boton-secundario:hover,
 body.modo-claro .boton-ordenar-historial:hover,
 body.modo-claro .boton-cerrar-historial:hover,
@@ -535,6 +545,20 @@ body.modo-claro .selector-dificultad-input {
 
 body.modo-claro .etiqueta-formulario {
     color: #475569;
+}
+
+body.modo-claro .lista-autocompletado {
+    background-color: #ffffff;
+    border-color: #cbd5e1;
+}
+
+body.modo-claro .lista-autocompletado li {
+    color: #0f172a;
+    border-bottom-color: #cbd5e1;
+}
+
+body.modo-claro .lista-autocompletado li:hover {
+    background-color: #e2e8f0;
 }
 
 .clase-oculta{

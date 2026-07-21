@@ -93,10 +93,8 @@ function guardarPartidaEnHistorial(haGanado, intentosUsados, tiempoSegundos) {
     var historial;
     var nuevaPartida;
     var ahora;
-
     historial = JSON.parse(localStorage.getItem('futbolle_historial')) || [];
     ahora = new Date();
-
     nuevaPartida = {
         usuario: nombreUsuario,
         resultado: haGanado ? 'Ganó' : 'Perdió',
@@ -110,7 +108,6 @@ function guardarPartidaEnHistorial(haGanado, intentosUsados, tiempoSegundos) {
         fecha: ahora.toLocaleString(),
         timestamp: ahora.getTime()
     };
-
     historial.push(nuevaPartida);
     localStorage.setItem(
         'futbolle_historial',
@@ -269,17 +266,13 @@ function manejarClicAutocompletado(evento) {
     var elementoSeleccionado;
     var idJugador;
     var i;
-
     elementoSeleccionado = evento.target;
-
     if (elementoSeleccionado.tagName !== 'LI') {
         return;
     }
-
     idJugador = Number(
         elementoSeleccionado.getAttribute('data-id')
     );
-
     for (i = 0; i < jugadoresSugeridos.length; i = i + 1) {
         if (jugadoresSugeridos[i].id === idJugador) {
             seleccionarJugador(jugadoresSugeridos[i]);
